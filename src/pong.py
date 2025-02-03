@@ -22,6 +22,16 @@ AZUL = ( 0, 0, 255 )
 COLOR_FONDO = (6,6,6)
 
 
+#definir sonidos 
+pg.mixer.init()
+sonido_golpe_paleta = pg.mixer.Sound("golpe_paleta.mp3")
+sonido_golpe_pared = pg.mixer.Sound("golpe_pared.mp3")
+sonido_punto = pg.mixer.Sound('punto.mp3')
+sonido_golpe_paleta.set_volume(.5)
+sonido_golpe_pared.set_volume(.5)
+sonido_punto.set_volume(.5)
+
+
 #tamaño y coordenadas de jugadores
 j1_x = 50
 j1_y = 250
@@ -37,6 +47,14 @@ ANCHO_PELOTA = 13
 ALTO_PELOTA = 13
 pelota_diferencia_x = 3
 pelota_diferencia_y = 3
+
+#puntaje inicial 
+puntos_j1 = 0
+puntos_j2 = 0
+
+#definir las fuentes 
+pg.font.init()
+calibri_bold_35 = pg.font.SysFont("calibri Bold", 35)
 
 
 
@@ -55,6 +73,11 @@ def dibujar_pantalla():
     pg.draw.rect(pantalla, ROJO, paleta_j1)
     pg.draw.rect(pantalla, AZUL, paleta_j2)
     pg.draw.rect(pantalla, BLANCO, pelota)
+    texto_puntos_j1 = calibri_bold_35.render('PUNTOS J1: ' + str(puntos_j1), True , ROJO)
+    texto_puntos_j2 = calibri_bold_35.render('PUNTOS J2: ' + str(puntos_j2), True , AZUL)
+    pantalla.blit(texto_puntos_j1, (130, 20))
+    pantalla.blit(texto_puntos_j2, (620, 20))
+
 
 
 def resetear_pelotas_y_pelotas():
@@ -106,14 +129,23 @@ while ejecutando:
 
     #verificar colisiones en cada movimiento de la pelota
     if pelota.colliderect(paleta_j1):
+        sonido_golpe_paleta.play()
         pelota_diferencia_x = abs(pelota_diferencia_x)
     elif pelota.colliderect(paleta_j2):
+        sonido_golpe_paleta.play()
         pelota_diferencia_x = abs(pelota_diferencia_x)*-1
     elif pelota_y <= 0:
+        sonido_golpe_pared.play()
         pelota_diferencia_y = abs(pelota_diferencia_y)
     elif pelota_y >= ALTO_PANTALLA:
+        sonido_golpe_pared.play()
         pelota_diferencia_y = abs(pelota_diferencia_y)*-1
     elif pelota_x <= 0 or pelota_x >= ANCHO_PANTALLA:
+        sonido_punto.play()
+        if pelota_x >= ANCHO_PANTALLA:
+            puntos_j1 += 1
+        elif pelota_x <= 0:
+            puntos_j2 += 1
         resetear_pelotas_y_pelotas()
 
 
