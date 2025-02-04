@@ -13,6 +13,7 @@ pg.display.set_caption("PongYera")
 #variables de inicalizacion 
 ejecutando = True
 mi_reloj = pg.time.Clock()
+puntos_para_ganar = 5
 
 
 #Paleta de colores 
@@ -20,6 +21,7 @@ BLANCO = (255,255,255)
 ROJO = (255, 0, 0)
 AZUL = ( 0, 0, 255 )
 COLOR_FONDO = (6,6,6)
+NEGRO = (255,255,255)
 
 
 #definir sonidos 
@@ -55,6 +57,7 @@ puntos_j2 = 0
 #definir las fuentes 
 pg.font.init()
 calibri_bold_35 = pg.font.SysFont("calibri Bold", 35)
+calibri_bold_50 = pg.font.SysFont("calibri Bold", 50)
 
 
 
@@ -78,6 +81,21 @@ def dibujar_pantalla():
     pantalla.blit(texto_puntos_j1, (130, 20))
     pantalla.blit(texto_puntos_j2, (620, 20))
 
+#verificar ganador 
+def verificar_ganador():
+    if puntos_j1 >= puntos_para_ganar:
+        return "Jugador 1 gana"
+    elif puntos_j2 >= puntos_para_ganar:
+        return "Jugador 2 gana"
+    return None
+
+def mostrar_ganador():
+    pantalla.fill(COLOR_FONDO)
+    texto_ganador = calibri_bold_50.render('ha ganado ' + ganador + '!', True, BLANCO)
+    pantalla.blit(texto_ganador, (ANCHO_PANTALLA//2 - texto_ganador.get_width()//2, ALTO_PANTALLA//2 -100))
+    pg.display.flip()
+    while True:
+        mi_reloj.tick(10)
 
 
 def resetear_pelotas_y_pelotas():
@@ -146,6 +164,13 @@ while ejecutando:
             puntos_j1 += 1
         elif pelota_x <= 0:
             puntos_j2 += 1
+        
+        #verificar si hay ganador 
+        ganador = verificar_ganador()
+        if ganador:
+            mostrar_ganador()
+
+
         resetear_pelotas_y_pelotas()
 
 
